@@ -19,3 +19,10 @@ TEST_CASE("Le vaisseau ne sort pas par la droite") {
     player.move(1000.0F, 0.0F);
     REQUIRE(player.getX() == 50.0F);
 }
+
+TEST_CASE("Le vaisseau avance selon sa vitesse et le temps écoulé") {
+    shootemup::Player player{800.0F, 600.0F};
+    const float departX{player.getX()};
+    player.update(1.0F, 0.0F, 0.1F);
+    REQUIRE_THAT(player.getX(), Catch::Matchers::WithinAbs(departX + 30.0F, 0.001F));
+}

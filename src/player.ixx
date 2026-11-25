@@ -37,6 +37,12 @@ export namespace shootemup {
             return height_;
         }
 
+        void update(float directionX, float directionY, float deltaSeconds) {
+            const float dx{speed_ * directionX * deltaSeconds};
+            const float dy{speed_ * directionY * deltaSeconds};
+            move(dx, dy);
+        }
+
     private:
         Vector2 position_{};
         float width_{50.0F};
