@@ -9,8 +9,17 @@ int main() {
     try {
         const shootemup::SdlContext sdlContext{};
         const window::Window window {"Shoot'em up",800, 600 };
-        SDL_Delay(10000);
 
+        bool isRunning {true};
+        while (isRunning) {
+            SDL_Event event{};
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_EVENT_QUIT) {
+                    isRunning = false;
+                }
+            }
+            SDL_Delay(16);
+        }
     }catch (const std::exception &e) {
         std::println("Exception: {}", e.what());
         return 1;
