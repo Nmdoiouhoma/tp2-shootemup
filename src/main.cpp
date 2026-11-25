@@ -2,13 +2,17 @@
 import std;
 import window;
 import sdl;
+import player;
 
 int main() {
     std::println("Shoot'em up");
 
     try {
         const shootemup::SdlContext sdlContext{};
-        const window::Window window {"Shoot'em up",800, 600 };
+        constexpr int screenWidth{800};
+        constexpr int screenHeight{600};
+        window::Window window {"Shoot'em up",screenWidth, screenHeight };
+        shootemup::Player player  {screenWidth, screenHeight };
 
         bool isRunning {true};
         while (isRunning) {
@@ -18,6 +22,9 @@ int main() {
                     isRunning = false;
                 }
             }
+            window.clear();
+            window.drawRectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+            window.present();
             SDL_Delay(16);
         }
     }catch (const std::exception &e) {

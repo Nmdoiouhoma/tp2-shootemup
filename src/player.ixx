@@ -30,6 +30,13 @@ export namespace shootemup {
             return position_.y;
         }
 
+        float getWidth() const {
+            return width_;
+        }
+        float getHeight() const {
+            return height_;
+        }
+
     private:
         Vector2 position_{};
         float width_{50.0F};
