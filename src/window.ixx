@@ -41,9 +41,4 @@ export namespace window {
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer_;
 
     };
-
-    class Application {
-
-    };
-
 }
