@@ -1,6 +1,6 @@
 export module projectile;
 import std;
-import player;
+import vector2;
 
 
 export namespace shootemup {

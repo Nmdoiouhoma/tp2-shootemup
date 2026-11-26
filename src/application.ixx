@@ -6,6 +6,8 @@ import sdl;
 import player;
 import projectile;
 import window;
+import vector2;
+import enemy;
 
 export namespace shootemup {
     class Application {
@@ -84,11 +86,14 @@ export namespace shootemup {
 
         static constexpr int screenWidth_{800};
         static constexpr int screenHeight_{600};
+        static constexpr float  spawnInterval_{1.0F};
 
         SdlContext sdlContext_;
         window::Window window_;
         Player player_;
         std::vector<Projectile> projectiles_{};
+        std::vector<Enemy> enemy{};
+        float spawnTimer_{0.0F};
         bool isRunning_{true};
         std::chrono::steady_clock::time_point previousTime_{std::chrono::steady_clock::now()};
     };

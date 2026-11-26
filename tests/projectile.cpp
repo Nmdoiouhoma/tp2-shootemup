@@ -1,6 +1,6 @@
 #include <catch2/catch_all.hpp>
 import std;
-import player;
+import vector2;
 import projectile;
 
 TEST_CASE("Le tir monte selon sa vitesse et le temps écoulé") {

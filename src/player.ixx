@@ -1,13 +1,9 @@
 export module player;
 
 import std;
+import vector2;
 
 export namespace shootemup {
-
-    struct Vector2 {
-        float x{};
-        float y{};
-    };
 
     class Player {
     public:
