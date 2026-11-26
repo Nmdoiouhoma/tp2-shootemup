@@ -3,6 +3,7 @@ import std;
 import window;
 import sdl;
 import player;
+import projectile;
 
 int main() {
     std::println("Shoot'em up");
@@ -16,6 +17,7 @@ int main() {
 
         bool isRunning {true};
         auto previousTime{std::chrono::steady_clock::now()};
+        std::vector<shootemup::Projectile> projectiles{};
         while (isRunning) {
             const auto currentTime{std::chrono::steady_clock::now()};
             const std::chrono::duration<float> elapsed{currentTime - previousTime};
@@ -28,6 +30,13 @@ int main() {
                 }
                if (event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_ESCAPE) {
                     isRunning = false;
+                }
+
+                if (event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_SPACE) {
+                    const  float projectileX {player.getX() + player.getWidth() / 2.0F - 2.5F};
+                    const  float projectileY {player.getY()};
+                    const shootemup::Vector2 startPosition {projectileX, projectileY};
+                    projectiles.push_back(shootemup::Projectile{startPosition});
                 }
             }
 
@@ -49,8 +58,17 @@ int main() {
                 directionY += 1.0F;
             }
             player.update(directionX, directionY, elapsed.count());
+            for (auto& projectile : projectiles) {
+                projectile.update(elapsed.count());
+            }
+            std::erase_if(projectiles, [](const shootemup::Projectile& projectile) {
+                return projectile.isOffScreen();
+            });
             window.clear();
             window.drawRectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+            for (const auto& projectile : projectiles) {
+                window.drawRectangle(projectile.getX(), projectile.getY(), projectile.getWidth(), projectile.getHeight());
+            }
             window.present();
             SDL_Delay(16);
         }
