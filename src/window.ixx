@@ -9,7 +9,7 @@ export namespace window {
 
     public:
         Window(std::string_view title, int width, int height)
-            : window_{SDL_CreateWindow(std::string{title}.c_str(), width, height, 0), &SDL_DestroyWindow},
+            : window_{SDL_CreateWindow(std::string{title}.c_str(), width, height, SDL_WINDOW_FULLSCREEN), &SDL_DestroyWindow},
               renderer_{SDL_CreateRenderer(window_.get(), nullptr), &SDL_DestroyRenderer} {
             if (!window_) {
                 throw std::runtime_error{SDL_GetError()};
@@ -17,6 +17,8 @@ export namespace window {
             if (!renderer_) {
                 throw std::runtime_error{SDL_GetError()};
             }
+
+            SDL_SetRenderLogicalPresentation(renderer_.get(), width, height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
         }
 
         void clear() {

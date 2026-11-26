@@ -26,6 +26,9 @@ int main() {
                 if (event.type == SDL_EVENT_QUIT) {
                     isRunning = false;
                 }
+               if (event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_ESCAPE) {
+                    isRunning = false;
+                }
             }
 
             const bool* keys{SDL_GetKeyboardState(nullptr)};
