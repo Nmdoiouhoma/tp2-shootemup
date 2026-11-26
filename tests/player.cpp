@@ -26,3 +26,9 @@ TEST_CASE("Le vaisseau avance selon sa vitesse et le temps écoulé") {
     player.update(1.0F, 0.0F, 0.1F);
     REQUIRE_THAT(player.getX(), Catch::Matchers::WithinAbs(departX + 30.0F, 0.001F));
 }
+
+TEST_CASE("Le vaisseau ne sort pas par le haut") {
+    shootemup::Player player{100.0F, 100.0F};
+    player.update(0.0F, -1.0F, 10.0F);
+    REQUIRE(player.getY() == 0.0F);
+}
