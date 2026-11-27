@@ -50,6 +50,14 @@ export namespace shootemup {
         }
 
         void update(float deltaSeconds) {
+            updatePlayer(deltaSeconds);
+            updateObjects(deltaSeconds);
+            handleCollisions();
+            removeDeadObjects();
+            spawnEnemies(deltaSeconds);
+        }
+
+        void updatePlayer(float deltaSeconds) {
             const bool* keys{SDL_GetKeyboardState(nullptr)};
             float directionX{0.0F};
             float directionY{0.0F};
@@ -67,32 +75,37 @@ export namespace shootemup {
                 directionY += 1.0F;
             }
             player_.update(directionX, directionY, deltaSeconds);
+        }
 
+        void updateObjects(float deltaSeconds) {
             for (auto& projectile : projectiles_) {
                 projectile.update(deltaSeconds);
             }
-
             for (auto& enemy : enemies_) {
                 enemy.update(deltaSeconds);
             }
+        }
 
+        void handleCollisions() {
             collisionManager_.handleProjectilesHitEnemies(projectiles_, enemies_);
-
             if (collisionManager_.isPlayerHit(player_, enemies_)) {
                 isRunning_ = false;
             }
+        }
 
+        void removeDeadObjects() {
             std::erase_if(projectiles_, [](const Projectile& projectile) {
                 return projectile.isOffScreen() || projectile.isDestroyed();
             });
-
-            std::erase_if(enemies_, [] (const Enemy& enemy) {
+            std::erase_if(enemies_, [](const Enemy& enemy) {
                 return enemy.isOffScreen(screenHeight_) || enemy.isDestroyed();
             });
+        }
 
+        void spawnEnemies(float deltaSeconds) {
             spawnTimer_ += deltaSeconds;
             if (spawnTimer_ > spawnInterval_) {
-                const Vector2 startPosition{screenWidth_ / 2.0F - 20.0F, -40.0F};
+                const Vector2 startPosition{spawnX_(randomEngine_), -40.0F};
                 enemies_.push_back(Enemy{startPosition});
                 spawnTimer_ = 0.0F;
             }
@@ -105,7 +118,7 @@ export namespace shootemup {
                 window_.drawRectangle(projectile.getBounds());
             }
 
-            for (const auto& enemy : enemies_) {
+            for (const auto& enemy : enemies_)  {
                 window_.drawRectangle(enemy.getBounds());
             }
             window_.present();
@@ -113,6 +126,9 @@ export namespace shootemup {
 
         static constexpr int screenWidth_{800};
         static constexpr int screenHeight_{600};
+        std::mt19937 randomEngine_{std::random_device{}()};
+        std::uniform_real_distribution<float> spawnX_{0.0F, screenWidth_ - 40.0F};
+
         static constexpr float  spawnInterval_{1.0F};
 
         SdlContext sdlContext_;
