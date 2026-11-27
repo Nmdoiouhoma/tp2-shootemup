@@ -132,10 +132,12 @@ export namespace shootemup {
 
         void spawnEnemies(float deltaSeconds) {
             spawnTimer_ += deltaSeconds;
-            if (spawnTimer_ > spawnInterval_) {
+            if (spawnTimer_ > currentSpawnInterval_) {
                 const Vector2 startPosition{spawnX_(randomEngine_), -40.0F};
                 enemies_.push_back(Enemy{startPosition});
                 spawnTimer_ = 0.0F;
+                currentSpawnInterval_ -= spawnIntervalDecrease_;
+                currentSpawnInterval_ = std::max(currentSpawnInterval_, minimumSpawnInterval_);
             }
         }
 
@@ -168,6 +170,10 @@ export namespace shootemup {
 
         static constexpr int screenWidth_{800};
         static constexpr int screenHeight_{600};
+        static constexpr float minimumSpawnInterval_{0.3F};
+        static constexpr float spawnIntervalDecrease_{0.02F};
+        float currentSpawnInterval_{spawnInterval_};
+
         std::mt19937 randomEngine_{std::random_device{}()};
         std::uniform_real_distribution<float> spawnX_{0.0F, (static_cast<float> (screenWidth_ - 40.0F))};
 
