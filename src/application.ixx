@@ -70,9 +70,26 @@ export namespace shootemup {
             for (auto& projectile : projectiles_) {
                 projectile.update(deltaSeconds);
             }
+
+            for (auto& enemy : enemies_) {
+                enemy.update(deltaSeconds);
+            }
+
+
             std::erase_if(projectiles_, [](const Projectile& projectile) {
                 return projectile.isOffScreen();
             });
+
+            std::erase_if(enemies_, [] (const Enemy& enemy) {
+                return enemy.isOffScreen(screenHeight_);
+            });
+
+            spawnTimer_ += deltaSeconds;
+            if (spawnTimer_ > spawnInterval_) {
+                const Vector2 startPosition{screenWidth_ / 2.0F - 20.0F, -40.0F};
+                enemies_.push_back(Enemy{startPosition});
+                spawnTimer_ = 0.0F;
+            }
         }
 
         void render() {
@@ -80,6 +97,10 @@ export namespace shootemup {
             window_.drawRectangle(player_.getX(), player_.getY(), player_.getWidth(), player_.getHeight());
             for (const auto& projectile : projectiles_) {
                 window_.drawRectangle(projectile.getX(), projectile.getY(), projectile.getWidth(), projectile.getHeight());
+            }
+
+            for (const auto& enemy : enemies_) {
+                window_.drawRectangle(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
             }
             window_.present();
         }
@@ -92,7 +113,7 @@ export namespace shootemup {
         window::Window window_;
         Player player_;
         std::vector<Projectile> projectiles_{};
-        std::vector<Enemy> enemy{};
+        std::vector<Enemy> enemies_;
         float spawnTimer_{0.0F};
         bool isRunning_{true};
         std::chrono::steady_clock::time_point previousTime_{std::chrono::steady_clock::now()};
