@@ -8,6 +8,7 @@ import projectile;
 import window;
 import vector2;
 import enemy;
+import collision;
 
 export namespace shootemup {
     class Application {
@@ -75,6 +76,11 @@ export namespace shootemup {
                 enemy.update(deltaSeconds);
             }
 
+            collisionManager_.handleProjectilesHitEnemies(projectiles_, enemies_);
+
+            if (collisionManager_.isPlayerHit(player_, enemies_)) {
+                isRunning_ = false;
+            }
 
             std::erase_if(projectiles_, [](const Projectile& projectile) {
                 return projectile.isOffScreen() || projectile.isDestroyed();
@@ -117,5 +123,6 @@ export namespace shootemup {
         float spawnTimer_{0.0F};
         bool isRunning_{true};
         std::chrono::steady_clock::time_point previousTime_{std::chrono::steady_clock::now()};
+        CollisionManager collisionManager_{};
     };
 }
