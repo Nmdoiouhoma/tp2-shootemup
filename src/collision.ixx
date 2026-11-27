@@ -35,21 +35,24 @@ export namespace shootemup {
 
     class CollisionManager {
     public:
-        void handleProjectilesHitEnemies(std::vector<Projectile>& projectiles, std::vector<Enemy>& enemies) {
+        int handleProjectilesHitEnemies(std::vector<Projectile>& projectiles, std::vector<Enemy>& enemies) {
+            auto count {0};
             for (auto& projectile : projectiles) {
-
                 for (auto& enemy : enemies) {
-                    if (intersects(projectile.getBounds(), enemy.getBounds())) {
+                    if (intersects(projectile.getBounds(), enemy.getBounds()) && !enemy.isDestroyed()) {
                         projectile.destroy();
                         enemy.destroy();
+                        count++;
                     }
                 }
             }
+            return count;
         }
 
-        bool isPlayerHit(const Player& player, const std::vector<Enemy>& enemies) const {
-            for (const auto& enemy : enemies) {
+        bool isPlayerHit(const Player& player, std::vector<Enemy>& enemies) const {
+            for (auto& enemy : enemies) {
                 if (intersects(player.getBounds(), enemy.getBounds())) {
+                    enemy.destroy();
                     return true;
                 }
             }

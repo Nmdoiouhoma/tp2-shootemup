@@ -53,6 +53,10 @@ export namespace shootemup {
             updatePlayer(deltaSeconds);
             updateObjects(deltaSeconds);
             handleCollisions();
+            handleEnemiesPassed();
+            if (lives_ <= 0) {
+                isRunning_ = false;
+            }
             removeDeadObjects();
             spawnEnemies(deltaSeconds);
         }
@@ -87,9 +91,10 @@ export namespace shootemup {
         }
 
         void handleCollisions() {
-            collisionManager_.handleProjectilesHitEnemies(projectiles_, enemies_);
+            const int countDestroyedEnemies = collisionManager_.handleProjectilesHitEnemies(projectiles_, enemies_);
+            score_ += countDestroyedEnemies * pointsPerEnemy_;
             if (collisionManager_.isPlayerHit(player_, enemies_)) {
-                isRunning_ = false;
+                lives_--;
             }
         }
 
@@ -111,13 +116,20 @@ export namespace shootemup {
             }
         }
 
+        void handleEnemiesPassed() {
+            for (const auto& enemy : enemies_){
+                if (enemy.isOffScreen(screenHeight_)) {
+                    lives_--;
+                }
+            }
+        }
+
         void render() {
             window_.clear();
             window_.drawRectangle(player_.getBounds());
             for (const auto& projectile : projectiles_) {
                 window_.drawRectangle(projectile.getBounds());
             }
-
             for (const auto& enemy : enemies_)  {
                 window_.drawRectangle(enemy.getBounds());
             }
@@ -130,6 +142,7 @@ export namespace shootemup {
         std::uniform_real_distribution<float> spawnX_{0.0F, screenWidth_ - 40.0F};
 
         static constexpr float  spawnInterval_{1.0F};
+        static constexpr int pointsPerEnemy_{10};
 
         SdlContext sdlContext_;
         window::Window window_;
@@ -140,5 +153,7 @@ export namespace shootemup {
         bool isRunning_{true};
         std::chrono::steady_clock::time_point previousTime_{std::chrono::steady_clock::now()};
         CollisionManager collisionManager_{};
+        int lives_{3};
+        int score_{0};
     };
 }
