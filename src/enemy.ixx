@@ -35,10 +35,19 @@ export namespace shootemup {
             return rectangle;
         }
 
+        void destroy() {
+            destroyed_ = true;
+        }
+
+        bool isDestroyed() const {
+            return destroyed_;
+        }
+
         private:
         Vector2 position_{0.0F, 0.0F};
         float height_{40.0F};
         float width_{40.0F};
         static constexpr float speed_{150.0F};
+        bool destroyed_{false};
     };
 }

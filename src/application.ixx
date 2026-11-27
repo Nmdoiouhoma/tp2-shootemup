@@ -77,11 +77,11 @@ export namespace shootemup {
 
 
             std::erase_if(projectiles_, [](const Projectile& projectile) {
-                return projectile.isOffScreen();
+                return projectile.isOffScreen() || projectile.isDestroyed();
             });
 
             std::erase_if(enemies_, [] (const Enemy& enemy) {
-                return enemy.isOffScreen(screenHeight_);
+                return enemy.isOffScreen(screenHeight_) || enemy.isDestroyed();
             });
 
             spawnTimer_ += deltaSeconds;
