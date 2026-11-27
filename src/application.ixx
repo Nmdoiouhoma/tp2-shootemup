@@ -94,13 +94,13 @@ export namespace shootemup {
 
         void render() {
             window_.clear();
-            window_.drawRectangle(player_.getX(), player_.getY(), player_.getWidth(), player_.getHeight());
+            window_.drawRectangle(player_.getBounds());
             for (const auto& projectile : projectiles_) {
-                window_.drawRectangle(projectile.getX(), projectile.getY(), projectile.getWidth(), projectile.getHeight());
+                window_.drawRectangle(projectile.getBounds());
             }
 
             for (const auto& enemy : enemies_) {
-                window_.drawRectangle(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+                window_.drawRectangle(enemy.getBounds());
             }
             window_.present();
         }

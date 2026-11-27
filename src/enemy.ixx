@@ -1,5 +1,6 @@
 export module enemy;
 import vector2;
+import rectangle;
 
 export namespace shootemup {
     class Enemy {
@@ -27,6 +28,11 @@ export namespace shootemup {
         }
         float getY() const {
             return position_.y;
+        }
+
+        Rectangle getBounds() const {
+            Rectangle rectangle{position_.x, position_.y, width_, height_};
+            return rectangle;
         }
 
         private:

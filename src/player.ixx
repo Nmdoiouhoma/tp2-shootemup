@@ -2,6 +2,7 @@ export module player;
 
 import std;
 import vector2;
+import rectangle;
 
 export namespace shootemup {
 
@@ -37,6 +38,11 @@ export namespace shootemup {
             const float dx{speed_ * directionX * deltaSeconds};
             const float dy{speed_ * directionY * deltaSeconds};
             move(dx, dy);
+        }
+
+        Rectangle getBounds() const {
+            Rectangle rectangle{position_.x, position_.y, width_, height_};
+            return rectangle;
         }
 
     private:

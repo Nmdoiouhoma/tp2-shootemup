@@ -1,7 +1,7 @@
 export module projectile;
 import std;
 import vector2;
-
+import rectangle;
 
 export namespace shootemup {
     class Projectile {
@@ -30,6 +30,11 @@ export namespace shootemup {
 
         float getHeight() const {
             return height_;
+        }
+
+        Rectangle getBounds() const {
+            Rectangle rectangle{position_.x, position_.y, width_, height_};
+            return rectangle;
         }
 
         private:

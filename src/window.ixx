@@ -3,6 +3,7 @@ module;
 
 export module window;
 import std;
+import rectangle;
 
 export namespace window {
     class Window {
@@ -26,10 +27,10 @@ export namespace window {
             SDL_RenderClear(renderer_.get());
         }
 
-        void drawRectangle(float x, float y, float width, float height) {
+        void drawRectangle( shootemup::Rectangle rectangle) {
             SDL_SetRenderDrawColor(renderer_.get(), 255, 255, 255, 255);
-            const SDL_FRect rectangle{x, y, width, height};
-            SDL_RenderFillRect(renderer_.get(), &rectangle);
+            const SDL_FRect sdlRectangle{rectangle.x, rectangle.y, rectangle.width, rectangle.height};
+            SDL_RenderFillRect(renderer_.get(), &sdlRectangle);
         }
 
         void present() {
