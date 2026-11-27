@@ -50,7 +50,7 @@ export namespace shootemup {
                 if (event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_ESCAPE) {
                     isRunning_ = false;
                 }
-                if (event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_SPACE) {
+                if (event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_SPACE && gameState_ == GameState::Playing) {
                     const float projectileX{player_.getX() + player_.getWidth() / 2.0F - 2.5F};
                     const float projectileY{player_.getY()};
                     const Vector2 startPosition{projectileX, projectileY};
@@ -76,7 +76,7 @@ export namespace shootemup {
 
         void restart() {
             score_ = 0;
-            lives_ = 3;
+            lives_ = startingLives_;
             gameState_ = GameState::Playing;
             player_ = Player{screenWidth_, screenHeight_};
             projectiles_.clear();
@@ -157,8 +157,11 @@ export namespace shootemup {
                 window_.drawRectangle(enemy.getBounds());
             }
             if (gameState_ == GameState::GameOver) {
-                window_.drawText("GAME OVER", 360.0F, 280.0F);
-                window_.drawText(std::format("Score :{}", score_), 360.0F, 300.0F);
+                const float titleX{(screenWidth_ - window_.textWidth("GAME OVER", 4.0F)) / 2};
+                window_.drawText("GAME OVER", titleX, 280.0F, 4.0F);
+                const std::string scoreText{std::format("Score : {}", score_)};
+                const float scoreX{(screenWidth_ - window_.textWidth(scoreText, 2.0F)) / 2};
+                window_.drawText(scoreText, scoreX, 330.0F, 2.0F);
             }
             window_.present();
         }
@@ -166,10 +169,11 @@ export namespace shootemup {
         static constexpr int screenWidth_{800};
         static constexpr int screenHeight_{600};
         std::mt19937 randomEngine_{std::random_device{}()};
-        std::uniform_real_distribution<float> spawnX_{0.0F, screenWidth_ - 40.0F};
+        std::uniform_real_distribution<float> spawnX_{0.0F, (static_cast<float> (screenWidth_ - 40.0F))};
 
         static constexpr float  spawnInterval_{1.0F};
         static constexpr int pointsPerEnemy_{10};
+        static constexpr int startingLives_{3};
 
         SdlContext sdlContext_;
         window::Window window_;
@@ -180,7 +184,7 @@ export namespace shootemup {
         bool isRunning_{true};
         std::chrono::steady_clock::time_point previousTime_{std::chrono::steady_clock::now()};
         CollisionManager collisionManager_{};
-        int lives_{3};
+        int lives_{startingLives_};
         int score_{0};
        GameState gameState_ {GameState::Playing};
     };

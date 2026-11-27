@@ -33,13 +33,19 @@ export namespace window {
             SDL_RenderFillRect(renderer_.get(), &sdlRectangle);
         }
 
-        void drawText(std::string_view text, float x, float y) {
+        void drawText(std::string_view text, float x, float y, float scale) {
+            SDL_SetRenderScale(renderer_.get(), scale, scale);
             SDL_SetRenderDrawColor(renderer_.get(), 255, 255, 255, 255);
-            SDL_RenderDebugText(renderer_.get(), x, y, std::string{text}.c_str());
+            SDL_RenderDebugText(renderer_.get(), x / scale, y / scale, std::string{text}.c_str());
+            SDL_SetRenderScale(renderer_.get(), 1.0F, 1.0F);
         }
 
         void present() {
             SDL_RenderPresent(renderer_.get());
+        }
+
+        float textWidth(std::string_view text, float scale) {
+            return SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE  * scale * static_cast<float> (text.size());
         }
 
     private:
