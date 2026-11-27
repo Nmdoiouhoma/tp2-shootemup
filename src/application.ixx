@@ -11,6 +11,13 @@ import enemy;
 import collision;
 
 export namespace shootemup {
+
+
+    enum class GameState {
+        Playing,
+        GameOver,
+    };
+
     class Application {
         public:
         Application()
@@ -24,7 +31,10 @@ export namespace shootemup {
                 previousTime_ = currentTime;
 
                 handleEvents();
-                update(elapsed.count());
+
+                if (gameState_ == GameState::Playing) {
+                    update(elapsed.count());
+                }
                 render();
                 SDL_Delay(16);
             }
@@ -46,6 +56,9 @@ export namespace shootemup {
                     const Vector2 startPosition{projectileX, projectileY};
                     projectiles_.push_back(Projectile{startPosition});
                 }
+                if (gameState_ == GameState::GameOver && event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_RETURN) {
+                    restart();
+                }
             }
         }
 
@@ -55,12 +68,22 @@ export namespace shootemup {
             handleCollisions();
             handleEnemiesPassed();
             if (lives_ <= 0) {
-                isRunning_ = false;
+                gameState_ = GameState::GameOver;
             }
             removeDeadObjects();
             spawnEnemies(deltaSeconds);
         }
 
+        void restart() {
+            score_ = 0;
+            lives_ = 3;
+            gameState_ = GameState::Playing;
+            player_ = Player{screenWidth_, screenHeight_};
+            projectiles_.clear();
+            enemies_.clear();
+            spawnTimer_ = 0.0F;
+
+        }
         void updatePlayer(float deltaSeconds) {
             const bool* keys{SDL_GetKeyboardState(nullptr)};
             float directionX{0.0F};
@@ -133,6 +156,10 @@ export namespace shootemup {
             for (const auto& enemy : enemies_)  {
                 window_.drawRectangle(enemy.getBounds());
             }
+            if (gameState_ == GameState::GameOver) {
+                window_.drawText("GAME OVER", 360.0F, 280.0F);
+                window_.drawText(std::format("Score :{}", score_), 360.0F, 300.0F);
+            }
             window_.present();
         }
 
@@ -155,5 +182,6 @@ export namespace shootemup {
         CollisionManager collisionManager_{};
         int lives_{3};
         int score_{0};
+       GameState gameState_ {GameState::Playing};
     };
 }

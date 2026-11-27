@@ -27,10 +27,15 @@ export namespace window {
             SDL_RenderClear(renderer_.get());
         }
 
-        void drawRectangle( shootemup::Rectangle rectangle) {
+        void drawRectangle(shootemup::Rectangle rectangle) {
             SDL_SetRenderDrawColor(renderer_.get(), 255, 255, 255, 255);
             const SDL_FRect sdlRectangle{rectangle.x, rectangle.y, rectangle.width, rectangle.height};
             SDL_RenderFillRect(renderer_.get(), &sdlRectangle);
+        }
+
+        void drawText(std::string_view text, float x, float y) {
+            SDL_SetRenderDrawColor(renderer_.get(), 255, 255, 255, 255);
+            SDL_RenderDebugText(renderer_.get(), x, y, std::string{text}.c_str());
         }
 
         void present() {
